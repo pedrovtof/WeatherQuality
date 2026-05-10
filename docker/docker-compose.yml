@@ -9,41 +9,7 @@ services:
       - python_app
     ports:
       - "4003:${PYTHON_APP_PORT}"
-    depends_on:
-      - clickhouse
-
-  # Zookeeper for clickhouse
-  zookeeper:
-    image: zookeeper:${ZOOKEEPER_VERSION}
-    restart: always
-    container_name: zookeeper
-    ports:
-      - "4000:${ZOOKEEPER_PORT}"
-    networks:
-      - python_app
-
-  # Clickhouse
-  clickhouse:
-    image: clickhouse/clickhouse-server:${CLICKHOUSE_VERSION}
-    restart: always
-    container_name: clickhouse
-    environment:
-      CLICKHOUSE_USER: ${CLICKHOUSE_USER}
-      CLICKHOUSE_PASSWORD: ${CLICKHOUSE_USER_PASSWORD}
-    ports:
-      - "4001:${CLICKHOUSE_PORT_HTTP_NATIVE}"
-      - "4002:${CLICKHOUSE_PORT_NATIVE}"
-    volumes:
-      - ./docker/config/clickhouse/config.xml:/etc/clickhouse-server/config.xml
-      - ./docker/config/clickhouse/users.xml:/etc/clickhouse-server/users.xml
-    depends_on:
-      - zookeeper
-    networks:
-      - python_app
 
 networks:
   python_app:
     driver: bridge
-
-volumes:
-  clickhouse_nodea:

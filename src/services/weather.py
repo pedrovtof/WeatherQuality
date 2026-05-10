@@ -21,7 +21,10 @@ class Weather:
             response.set_details(_response)
 
             return response.build_return()
-        except Exception:
+        except Exception as e:
+            print(f"ERROR in get_hourly_air_quality_values: {str(e)}")
+            import traceback
+            traceback.print_exc()
             response = ResponseErrorApi()
             response.set_status(400)
             response.set_message(EnumApiResponse.ERROR_GENERIC.value)
