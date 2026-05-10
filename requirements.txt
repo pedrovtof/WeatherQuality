@@ -1,0 +1,10 @@
+openmeteo-requests
+requests-cache
+retry-requests
+numpy
+pandas
+python-dotenv
+fastapi[standard]
+clickhouse-connect
+pylint
+pytest
