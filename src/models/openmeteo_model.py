@@ -49,7 +49,7 @@ class Openmeteo:
         current = response.Current()
         if current:
             current_data = {
-                "time": pd.to_datetime(current.Time(), unit="s", utc=True).astype(str)
+                "time": pd.to_datetime(current.Time(), unit="s", utc=True).isoformat()
             }
             current_params = self._Param.get("current", [])
             if isinstance(current_params, str):
@@ -64,12 +64,12 @@ class Openmeteo:
         hourly = response.Hourly()
         if hourly:
             hourly_data = {
-                "time": pd.date_range(
+                "time": [t.isoformat() for t in pd.date_range(
                     start=pd.to_datetime(hourly.Time(), unit="s", utc=True),
                     end=pd.to_datetime(hourly.TimeEnd(), unit="s", utc=True),
                     freq=pd.Timedelta(seconds=hourly.Interval()),
                     inclusive="left"
-                ).astype(str).tolist()
+                )]
             }
 
             hourly_params = self._Param.get("hourly", [])
@@ -109,7 +109,7 @@ class Openmeteo:
             current = response.Current()
             if current:
                 current_data = {
-                    "time": pd.to_datetime(current.Time(), unit="s", utc=True).astype(str)
+                    "time": pd.to_datetime(current.Time(), unit="s", utc=True).isoformat()
                 }
                 current_params = self._Param.get("current", [])
                 if isinstance(current_params, str):
@@ -123,12 +123,12 @@ class Openmeteo:
             daily = response.Daily()
             if daily:
                 daily_data = {
-                    "time": pd.date_range(
+                    "time": [t.isoformat() for t in pd.date_range(
                         start=pd.to_datetime(daily.Time(), unit="s", utc=True),
                         end=pd.to_datetime(daily.TimeEnd(), unit="s", utc=True),
                         freq=pd.Timedelta(seconds=daily.Interval()),
                         inclusive="left"
-                    ).astype(str).tolist()
+                    )]
                 }
 
                 daily_params = self._Param.get("daily", [])
