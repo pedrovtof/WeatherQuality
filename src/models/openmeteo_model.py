@@ -2,6 +2,7 @@
 import openmeteo_requests
 import os
 import pandas as pd
+import math
 # pyrefly: ignore [missing-import]
 import requests_cache
 # pyrefly: ignore [missing-import]
@@ -24,6 +25,19 @@ class Openmeteo:
         self._Param = None
 
         return
+
+    @staticmethod
+    def _sanitize_nan(obj):
+        """
+        Recursively replace NaN with None.
+        """
+        if isinstance(obj, float) and math.isnan(obj):
+            return None
+        elif isinstance(obj, list):
+            return [Openmeteo._sanitize_nan(item) for item in obj]
+        elif isinstance(obj, dict):
+            return {k: Openmeteo._sanitize_nan(v) for k, v in obj.items()}
+        return obj
 
     def execute_api_air_request(self, value : any) -> object:
         """
@@ -81,7 +95,7 @@ class Openmeteo:
 
             obj["Hourly"] = hourly_data
 
-        return obj
+        return self._sanitize_nan(obj)
 
     def execute_api_climate_request(self, value : any) -> list:
         """
@@ -142,5 +156,5 @@ class Openmeteo:
 
             results.append(obj)
 
-        return results
+        return [self._sanitize_nan(res) for res in results]
 

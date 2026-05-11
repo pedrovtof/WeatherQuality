@@ -56,6 +56,7 @@ def test_weather_model_parsing():
         mock_hourly.Variables.return_value = mock_var
         
         mock_response.Hourly.return_value = mock_hourly
+        mock_response.Current.return_value = None
         mock_client.weather_api.return_value = [mock_response]
         
         model = Openmeteo()
