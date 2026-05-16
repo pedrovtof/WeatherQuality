@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 
 interface ChartProps {
@@ -10,27 +10,26 @@ interface ChartProps {
 }
 
 const ChartComponent: React.FC<ChartProps> = ({ title, labels, datasets, yAxisSuffix = "" }) => {
-  // Get screen width and subtract padding for safety
   const screenWidth = Dimensions.get('window').width;
-  // Dashboard has padding: 20, and ChartComponent container has marginHorizontal via Dashboard's padding
-  // We subtract Dashboard padding (20*2) + ChartComponent container internal padding (10*2)
-  const chartWidth = screenWidth - 60; 
+  // Dashboard has padding: 16. Parent container has padding: 12.
+  const containerPadding = 16 * 2 + 12 * 2;
+  const availableWidth = screenWidth - containerPadding;
 
-  // Limit labels for readability - show about 5-6 max
-  const skip = Math.max(1, Math.floor(labels.length / 5));
-  const displayLabels = labels.filter((_, i) => i % skip === 0).slice(0, 6);
+  // Calculate dynamic width: at least the screen width, but expands with labels
+  // 60 pixels per label seems reasonable for "DD/MM HH:mm"
+  const dynamicWidth = Math.max(availableWidth, labels.length * 60);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{title}</Text>
-      <View style={styles.chartWrapper}>
+      <ScrollView horizontal showsHorizontalScrollIndicator={true} style={styles.scrollView}>
         <LineChart
           data={{
-            labels: displayLabels,
+            labels: labels,
             datasets: datasets,
           }}
-          width={chartWidth}
-          height={200}
+          width={dynamicWidth}
+          height={260}
           yAxisSuffix={yAxisSuffix}
           chartConfig={{
             backgroundColor: '#ffffff',
@@ -55,11 +54,12 @@ const ChartComponent: React.FC<ChartProps> = ({ title, labels, datasets, yAxisSu
           style={styles.chart}
           withInnerLines={false}
           withOuterLines={true}
-          withVerticalLines={false}
+          withVerticalLines={true}
           withHorizontalLines={true}
           fromZero={true}
+          verticalLabelRotation={30}
         />
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -79,10 +79,8 @@ const styles = StyleSheet.create({
     elevation: 4,
     width: '100%',
   },
-  chartWrapper: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
+  scrollView: {
+    borderRadius: 16,
   },
   title: {
     fontSize: 15,
@@ -94,7 +92,8 @@ const styles = StyleSheet.create({
   chart: {
     marginVertical: 8,
     borderRadius: 16,
-    paddingRight: 40, // Ensure enough room for Y axis labels
+    paddingRight: 40,
+    paddingBottom: 20,
   },
 });
 

@@ -84,6 +84,40 @@ const Dashboard: React.FC = () => {
           </View>
         )}
 
+        {/* Global Date Filter */}
+        <View style={styles.section}>
+          <View style={styles.card}>
+            <View style={styles.cardHeader}>
+              <Calendar size={16} color="#8E8E93" />
+              <Text style={styles.cardLabel}>Analysis Period (All Charts)</Text>
+            </View>
+            
+            <View style={styles.dateControls}>
+              <View style={styles.dateRow}>
+                <View>
+                  <Text style={styles.dateTypeLabel}>From</Text>
+                  <Text style={styles.dateValue}>{startDate}</Text>
+                </View>
+                <View style={styles.buttonRow}>
+                  <TouchableOpacity onPress={() => adjustDate('start', -7)} style={styles.smallButton}><Text style={styles.smallButtonText}>-7d</Text></TouchableOpacity>
+                  <TouchableOpacity onPress={() => adjustDate('start', 7)} style={styles.smallButton}><Text style={styles.smallButtonText}>+7d</Text></TouchableOpacity>
+                </View>
+              </View>
+              
+              <View style={[styles.dateRow, { borderTopWidth: 1, borderTopColor: '#F2F2F7', paddingTop: 12, marginTop: 12 }]}>
+                <View>
+                  <Text style={styles.dateTypeLabel}>To</Text>
+                  <Text style={styles.dateValue}>{endDate}</Text>
+                </View>
+                <View style={styles.buttonRow}>
+                  <TouchableOpacity onPress={() => adjustDate('end', -7)} style={styles.smallButton}><Text style={styles.smallButtonText}>-7d</Text></TouchableOpacity>
+                  <TouchableOpacity onPress={() => adjustDate('end', 7)} style={styles.smallButton}><Text style={styles.smallButtonText}>+7d</Text></TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+
         {weatherData && (
           <View style={styles.section}>
             <View style={styles.sectionTitleRow}>
@@ -93,8 +127,12 @@ const Dashboard: React.FC = () => {
             <ChartComponent 
               title="PM2.5 Levels"
               labels={weatherData.time.map(t => {
-                const parts = t.split(/[T ]/);
-                return parts.length > 1 ? parts[1].substring(0, 5) : t;
+                const date = new Date(t);
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const hours = date.getHours().toString().padStart(2, '0');
+                const minutes = date.getMinutes().toString().padStart(2, '0');
+                return `${day}/${month} ${hours}:${minutes}`;
               })}
               datasets={[{ data: weatherData.pm2_5 as number[] }]}
               yAxisSuffix=""
@@ -102,8 +140,12 @@ const Dashboard: React.FC = () => {
             <ChartComponent 
               title="Nitrogen Dioxide"
               labels={weatherData.time.map(t => {
-                const parts = t.split(/[T ]/);
-                return parts.length > 1 ? parts[1].substring(0, 5) : t;
+                const date = new Date(t);
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                const hours = date.getHours().toString().padStart(2, '0');
+                const minutes = date.getMinutes().toString().padStart(2, '0');
+                return `${day}/${month} ${hours}:${minutes}`;
               })}
               datasets={[{ data: weatherData.nitrogen_dioxide as number[], color: () => '#FF9500' }]}
               yAxisSuffix=""
@@ -119,37 +161,6 @@ const Dashboard: React.FC = () => {
             </View>
 
             <View style={styles.card}>
-              <View style={styles.cardHeader}>
-                <Calendar size={16} color="#8E8E93" />
-                <Text style={styles.cardLabel}>Analysis Period</Text>
-              </View>
-              
-              <View style={styles.dateControls}>
-                <View style={styles.dateRow}>
-                  <View>
-                    <Text style={styles.dateTypeLabel}>From</Text>
-                    <Text style={styles.dateValue}>{startDate}</Text>
-                  </View>
-                  <View style={styles.buttonRow}>
-                    <TouchableOpacity onPress={() => adjustDate('start', -7)} style={styles.smallButton}><Text style={styles.smallButtonText}>-7d</Text></TouchableOpacity>
-                    <TouchableOpacity onPress={() => adjustDate('start', 7)} style={styles.smallButton}><Text style={styles.smallButtonText}>+7d</Text></TouchableOpacity>
-                  </View>
-                </View>
-                
-                <View style={[styles.dateRow, { borderTopWidth: 1, borderTopColor: '#F2F2F7', paddingTop: 12, marginTop: 12 }]}>
-                  <View>
-                    <Text style={styles.dateTypeLabel}>To</Text>
-                    <Text style={styles.dateValue}>{endDate}</Text>
-                  </View>
-                  <View style={styles.buttonRow}>
-                    <TouchableOpacity onPress={() => adjustDate('end', -7)} style={styles.smallButton}><Text style={styles.smallButtonText}>-7d</Text></TouchableOpacity>
-                    <TouchableOpacity onPress={() => adjustDate('end', 7)} style={styles.smallButton}><Text style={styles.smallButtonText}>+7d</Text></TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-            </View>
-
-            <View style={[styles.card, { marginTop: 16 }]}>
                <Text style={[styles.cardLabel, { marginBottom: 12 }]}>Comparison Models</Text>
                <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipContainer}>
                 {availableModels.map((item) => (
