@@ -45,6 +45,11 @@ class WeatherRequest(BaseModel):
         """
         params = self.model_dump(exclude_none=True)
         
+        # Open-Meteo API: start_date/end_date are mutually exclusive with forecast_days/past_days
+        if "start_date" in params or "end_date" in params:
+            params.pop("forecast_days", None)
+            params.pop("past_days", None)
+
         # Merge bracketed versions if they exist
         if "hourly_brackets" in params:
             hourly = params.get("hourly", [])

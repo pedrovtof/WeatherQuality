@@ -2,6 +2,8 @@ export interface WeatherParams {
   latitude: number;
   longitude: number;
   hourly?: string[];
+  start_date?: string;
+  end_date?: string;
 }
 
 export interface ClimateParams {

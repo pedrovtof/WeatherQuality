@@ -48,6 +48,8 @@ export const useAppController = () => {
         latitude: loc.latitude,
         longitude: loc.longitude,
         hourly: selectedPollutants,
+        start_date: startDate,
+        end_date: endDate,
       });
       setWeatherData(weatherRes.data.Hourly);
 
